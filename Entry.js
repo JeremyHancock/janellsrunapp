@@ -18,11 +18,15 @@ class Entry extends Component {
         };
         this.setDate = this.setDate.bind(this);
         api = API;
-    }
+    };
 
     setDate(newDate) {
         this.setState({ date: newDate });
-    }
+    };
+
+    componentWillUnmount() {
+        this.mounted = false;
+    };
 
     collectRunFromForm() {
         run = {
@@ -67,7 +71,8 @@ class Entry extends Component {
             minutes: '',
             seconds: ''
         })
-    }
+    };
+
     formatTimeToSeconds(h, m, s) {
         h = Number(h);
         m = Number(m);
@@ -80,7 +85,7 @@ class Entry extends Component {
         d = d.split(' ');
         d = d[1] + ' ' + d[2] + ', ' + d[3];
         return d;
-    }
+    };
 
     render() {
         return (
@@ -179,8 +184,8 @@ class Entry extends Component {
                 </ScrollView>
             </KeyboardAvoidingView>
         );
-    }
-}
+    };
+};
 
 const styles = StyleSheet.create({
     container: {

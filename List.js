@@ -37,12 +37,13 @@ class List extends Component {
     componentWillUnmount() {
         this.mounted = false;
     };
+
     getStoredData() {
         AsyncStorage.getItem("races").then((value) => {
             this.setState({ runs: JSON.parse(value) });
             this.formatRaceData(JSON.parse(value));
         })
-    }
+    };
 
     callApi() {
         if (this.state.apiNotCalled) {
@@ -72,11 +73,11 @@ class List extends Component {
                     console.log(err);
                 })
         }
-    }
+    };
 
     addRace = () => {
         this.props.select('add');
-    }
+    };
 
     formatRaceData(runs) {
         races = [];
@@ -109,20 +110,19 @@ class List extends Component {
 
     showRaces() {
         if (!this.state.loading) {
-            return <Rows
-                        data={this.props.training ? trainingRuns : races}
-                        flexArr={[2, 0.5, 1, 1]}
-                        textStyle={{ textAlign: 'center' }}
-                        style={{ height: 50 }} 
-                        />
+            return <View style={{ paddingBottom: 50 }}>
+                <Rows
+                    data={this.props.training ? trainingRuns : races}
+                    flexArr={[2, 0.5, 1, 1]}
+                    textStyle={{ textAlign: 'center' }}
+                    style={{ height: 50 }}
+                />
+            </View>
         } else {
             return <View style={{ flex: 1, padding: 50 }}><ActivityIndicator size="large" /></View>
         }
-    }
+    };
 
-    revealButtons() {
-        Alert.alert("I'm pressed!");
-    }
     convertRunDuration(time) {
         dateObj = new Date(time * 1000);
         hours = dateObj.getUTCHours();
@@ -131,14 +131,14 @@ class List extends Component {
         return timeString = hours.toString().padStart(2, '0') + ':' +
             minutes.toString().padStart(2, '0') + ':' +
             seconds.toString().padStart(2, '0');
-    }
+    };
 
     getFormattedDate(date) {
         let year = date.getFullYear().toString().slice(2);
         let month = (1 + date.getMonth()).toString().padStart(2, '0');
         let day = date.getDate().toString().padStart(2, '0');
         return month + '/' + day + '/' + year;
-    }
+    };
 
     headerSelectCallback = (response) => {
         this.setState({ sortBy: response.toString() });
@@ -152,7 +152,7 @@ class List extends Component {
             default:
                 return this.sortByTime();
         }
-    }
+    };
 
     NameComparator(a, b) {
         if (a[0] > b[0]) return -1;
@@ -230,13 +230,13 @@ class List extends Component {
                         keyboardShouldPersistTaps='handled'
                         style={{
                             backgroundColor: '#d9d9d9',
-                            height: '100%'
+                            height: '100%',
                         }}>
                         {this.showRaces()}
                     </ScrollView>
                 </Table>
             </View>
         )
-    }
-}
+    };
+};
 export default List;

@@ -53,11 +53,11 @@ class PRs extends Component {
             .catch(function (err) {
                 console.log(err);
             })
-    }
+    };
 
     getYear(runDate) {
         return runDate.getFullYear().toString();
-    }
+    };
 
     racesForSelectedYear(selectedYear) {
         this.setState({ selectedYear: selectedYear, hidePicker: true })
@@ -76,7 +76,7 @@ class PRs extends Component {
                 }
             })
         }
-    }
+    };
 
     getPRs() {
         distances = [];
@@ -145,7 +145,7 @@ class PRs extends Component {
         let month = months[(date.getMonth())];
         let day = date.getDate().toString();
         return month + ' ' + day + ' ' + year;
-    }
+    };
 
     convertRunDuration(time) {
         dateObj = new Date(time * 1000);
@@ -155,7 +155,7 @@ class PRs extends Component {
         return timeString = hours.toString().padStart(2, '0') + ':' +
             minutes.toString().padStart(2, '0') + ':' +
             seconds.toString().padStart(2, '0');
-    }
+    };
 
     render() {
         this.getPRs();
@@ -191,23 +191,26 @@ class PRs extends Component {
                             <Picker.Item label='2010' value='2010' />
                         </Picker>}
                 </View>
-                <View>
+                <View style={{width: '100%'}}>
                     {this.state.loading ?
-                        <View style={{ flex: 1, padding: 50 }}>
+                        <View style={{ padding: 50 }}>
                             <ActivityIndicator size="large" />
                         </View>
                         :
-                        <ScrollView style={{
-                            backgroundColor: '#d9d9d9', width: '100%',
-                            height: '100%'
-                        }}>
-                            {this.personalRecords}
-                        </ScrollView>
+                        <View style={{ paddingBottom: 40 }}>
+                            <ScrollView style={{
+                                backgroundColor: '#d9d9d9', 
+                                width: '100%',
+                                height: '100%'
+                            }}>
+                                {this.personalRecords}
+                            </ScrollView>
+                        </View>
                     }
                 </View>
             </View>
 
         )
-    }
-}
+    };
+};
 export default PRs;

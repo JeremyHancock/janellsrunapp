@@ -15,7 +15,9 @@ export default class Login extends Component {
         };
         api = API;
     };
-
+    componentWillUnmount() {
+        this.mounted = false;
+    }
     switchForm() {
         this.setState({ signup: !this.state.signup })
     }

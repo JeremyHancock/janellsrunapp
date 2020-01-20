@@ -45,7 +45,7 @@ app.post('/runs', function (req, res) {
   res.send(res.statusMessage);
 });
 
-app.update('/runs', async function (req, res) {
+app.put('/runs', async function (req, res) {
   runs = await updateRun(req.query);
   res.send(runs);
   return res.statusCode;
@@ -102,21 +102,20 @@ function getRuns(user) {
         .then(snapshot => {
           if (snapshot.empty) {
             console.log('No matching documents.');
-            resolve(null);
+            return resolve(null);
           }
           else {
-            process.on('unhandledRejection', r => console.log(r));
             this.races = [];
             snapshot.forEach(doc => {
               raceDetails = doc.data();
               this.races.push(raceDetails);
             });
-            resolve(this.races)
+            return resolve(this.races)
           }
         })
         .catch(err => {
           console.log('Error getting documents', err);
-          reject(err);
+          return reject(err);
         });
     }
   })
@@ -124,19 +123,19 @@ function getRuns(user) {
 
 function postRun(run) {
   if (run.body.user !== undefined) {
-    db.collection(run.body.user + '.runs').doc(run.body.runDate).set(run.body);
+    db.collection(run.body.user + '.runs').doc(Date.now().toString()).set(run.body);
     console.log('postRun hit', run.body.raceName);
   }
-}
+};
 
 function updateRun(run) {
   if (run.body !== undefined) {
     console.log('updateRun was hit', run.body);
   }
-}
+};
 
 function deleteRun(run) {
   if (run.body !== undefined) {
     console.log('deleteRun was hit', run.body);
   }
-}
+};

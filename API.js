@@ -25,27 +25,13 @@ export default {
             })
             .catch(function (error) {
                 console.log(error);
-            });
+            })
     },
     updateRun: function (run) {
         console.log('updateRun was called', run);
-        axios.update('http://192.168.1.183:8080/runs', run)
-            .then(function (response) {
-                return response;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
     },
     deleteRun: function (run) {
         console.log('deleteRun was called', run);
-        axios.delete('http://192.168.1.183:80080/runs', run)
-            .then(function (response) {
-                return response;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
     },
     signin: function (email, password) {
         console.log('signin was called for', email);
