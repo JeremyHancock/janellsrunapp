@@ -59,7 +59,7 @@ app.delete('/runs', async function (req, res) {
 
 function signin(creds) {
   email = creds.query.email.toLowerCase();
-  getRuns();
+  // getRuns();
   return new Promise(function (resolve, reject) {
     authUser = auth.getUserByEmail(email)
       .then((userRecord) => {
@@ -69,7 +69,8 @@ function signin(creds) {
         }
       })
       .catch(function (error) {
-        resolve('not a known user');
+        console.log(error)
+        resolve('an error occurred', error);
       });
   });
 };
@@ -82,27 +83,28 @@ function signup(creds) {
       password: creds.body.password
     })
       .then((userRecord) => {
-        if(userRecord){
+        if (userRecord) {
           console.log('user created for', creds.body.email)
           resolve(true);
         }
       })
       .catch(function (error) {
         console.log(error)
-        reject(error);
+        resolve(error);
       });
   });
 }
 
 function getRuns(user) {
-  return new Promise(function (resolve, reject) {
-    if (user && user !== (undefined || 'undefined')) {
+  console.log('user', user)
+  if (user && user !== (undefined || 'undefined')) {
+    return new Promise(function (resolve, reject) {
       console.log('getRuns hit by', user)
       db.collection(user + '.runs').get()
         .then(snapshot => {
           if (snapshot.empty) {
             console.log('No matching documents.');
-            return resolve(null);
+            resolve(null);
           }
           else {
             this.races = [];
@@ -110,20 +112,20 @@ function getRuns(user) {
               raceDetails = doc.data();
               this.races.push(raceDetails);
             });
-            return resolve(this.races)
+            resolve(this.races)
           }
         })
         .catch(err => {
           console.log('Error getting documents', err);
-          return reject(err);
+          resolve(err);
         });
-    }
-  })
+    })
+  }
 };
 
 function postRun(run) {
   if (run.body.user !== undefined) {
-    db.collection(run.body.user + '.runs').doc(Date.now().toString()).set(run.body);
+    db.collection(run.body.user + '.runs').doc(run.body.id).set(run.body);
     console.log('postRun hit', run.body.raceName);
   }
 };

@@ -12,7 +12,7 @@ export default class App extends Component {
     super();
     this.state = {
       selected: 'login',
-      hideMenu: false,
+      hideMenu: true,
       training: false,
       user: '',
       listChangeCounter: 1,

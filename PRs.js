@@ -10,6 +10,7 @@ class PRs extends Component {
         this.state = {
             selectedYear: 'All Time',
             selectedRaces: [],
+            personalRecords: [],
             hidePicker: true,
             races: [],
             loading: true
@@ -18,8 +19,6 @@ class PRs extends Component {
         list = List;
         racePRs = [];
     };
-
-    personalRecords = [];
 
     componentDidMount() {
         this.mounted = true;
@@ -37,17 +36,35 @@ class PRs extends Component {
 
     getStoredData() {
         AsyncStorage.getItem("races").then((value) => {
-            this.setState({ races: JSON.parse(value), loading: false });
+            if (value.length > 2) {
+                this.setState({ races: JSON.parse(value), loading: false });
+            } else {
+                this.setState({
+                    loading: false,
+                    personalRecords:
+                        <View>
+                            <Text style={{ textAlign: 'center', padding: 30 }}>{'Your PRs are gonna look AMAZING here'}</Text>
+                        </View>
+                });
+            }
         })
     };
 
     callApi() {
         api.getRuns(this.props.user)
             .then(function (races) {
-                if (this.mounted) {
+                if (races.length !== 0) {
                     this.setState({ races: races, loading: false });
                     stringifiedRaces = JSON.stringify(races);
                     AsyncStorage.setItem('races', stringifiedRaces);
+                } else {
+                    this.setState({
+                        loading: false,
+                        personalRecords:
+                            <View>
+                                <Text style={{ textAlign: 'center', padding: 30 }}>{'No races have been entered'}</Text>
+                            </View>
+                    });
                 }
             }.bind(this))
             .catch(function (err) {
@@ -87,31 +104,33 @@ class PRs extends Component {
         } else {
             races = this.state.selectedRaces;
         }
-        races.forEach(race => {
-            distances.includes(race.runDistance) ? null : distances.push(race.runDistance);
-        });
-        distances = distances.sort(function (a, b) { return b - a });
-        distances.forEach(distance => {
-            pr = 86400;
-            counter = 0;
+        if (races.length !== 0) {
             races.forEach(race => {
-                if (race.raceName !== 'Training') {
-                    if (race.runDistance === distance) {
-                        if (race.runDurationInSeconds < pr) {
-                            pr = race.runDurationInSeconds;
-                            if (counter === 0) {
-                                racePRs.push(race);
-                                counter++;
-                            } else {
-                                racePRs.pop();
-                                racePRs.push(race);
-                            }
-                        };
-                    };
-                }
+                distances.includes(race.runDistance) ? null : distances.push(race.runDistance);
             });
-        });
-        this.DisplayPRs(racePRs);
+            distances = distances.sort(function (a, b) { return b - a });
+            distances.forEach(distance => {
+                pr = 86400;
+                counter = 0;
+                races.forEach(race => {
+                    if (race.raceName !== 'Training') {
+                        if (race.runDistance === distance) {
+                            if (race.runDurationInSeconds < pr) {
+                                pr = race.runDurationInSeconds;
+                                if (counter === 0) {
+                                    racePRs.push(race);
+                                    counter++;
+                                } else {
+                                    racePRs.pop();
+                                    racePRs.push(race);
+                                }
+                            };
+                        };
+                    }
+                });
+            });
+            this.DisplayPRs(racePRs);
+        };
     };
 
     DisplayPRs(passedRaces) {
@@ -129,14 +148,14 @@ class PRs extends Component {
                 </View>
             );
             if (prs.length === passedRaces.length) {
-                return (this.personalRecords = prs)
+                this.setState({personalRecords: prs});
             }
         } else {
             noRaces = <View>
                 <Text style={{ textAlign: 'center', padding: 30 }}>{'No races entered for ' + this.state.selectedYear}</Text>
             </View>
-            return (this.personalRecords = noRaces)
-        }
+                this.setState({personalRecords: noRaces});
+            }
     };
 
     getFormattedDate(date) {
@@ -158,7 +177,7 @@ class PRs extends Component {
     };
 
     render() {
-        this.getPRs();
+        // this.getPRs();
         return (
             <View style={{ flex: 1, paddingTop: 10, alignItems: 'center' }}>
                 <View style={{ width: '100%', borderBottomWidth: 3 }}>
@@ -191,7 +210,7 @@ class PRs extends Component {
                             <Picker.Item label='2010' value='2010' />
                         </Picker>}
                 </View>
-                <View style={{width: '100%'}}>
+                <View style={{ width: '100%' }}>
                     {this.state.loading ?
                         <View style={{ padding: 50 }}>
                             <ActivityIndicator size="large" />
@@ -199,11 +218,11 @@ class PRs extends Component {
                         :
                         <View style={{ paddingBottom: 40 }}>
                             <ScrollView style={{
-                                backgroundColor: '#d9d9d9', 
+                                backgroundColor: '#d9d9d9',
                                 width: '100%',
                                 height: '100%'
                             }}>
-                                {this.personalRecords}
+                                {this.state.personalRecords}
                             </ScrollView>
                         </View>
                     }

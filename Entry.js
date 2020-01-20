@@ -30,12 +30,12 @@ class Entry extends Component {
 
     collectRunFromForm() {
         run = {
+            user: this.props.user,
+            id: Date.now().toString(),
             raceName: this.state.training ? 'Training' : this.state.raceName,
             runDate: this.state.date,
             runDistance: this.state.distance,
             runDurationInSeconds: this.formatTimeToSeconds(this.state.hours, this.state.minutes, this.state.seconds),
-            trainingOnly: this.state.training,
-            user: this.props.user
         }
         if (run.raceName && run.runDistance && run.runDurationInSeconds >= 60) {
             this.postRun(run);
@@ -58,7 +58,7 @@ class Entry extends Component {
         this.props.listCounterReset(1);
         if (run.raceName !== 'Training') {
             this.props.prCounterReset(1);
-        }   
+        }
     };
 
     resetFormValues() {
@@ -69,7 +69,8 @@ class Entry extends Component {
             date: new Date(),
             hours: '',
             minutes: '',
-            seconds: ''
+            seconds: '',
+            other: false
         })
     };
 
@@ -90,7 +91,7 @@ class Entry extends Component {
     render() {
         return (
             <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" >
-                <ScrollView>
+                <ScrollView >
                     <View style={{ alignItems: 'center' }}>
                         <View style={this.state.training ? null : { flexDirection: 'row', borderWidth: 3, borderRadius: 5, borderColor: '#008080' }} >
                             {this.state.training ? null :
@@ -129,7 +130,7 @@ class Entry extends Component {
                                 selectedValue={this.state.distance}
                                 style={{ width: 250, borderWidth: 3, borderRadius: 5, borderColor: '#008080', margin: 5 }}
                                 onValueChange={(itemValue, itemIndex) =>
-                                    itemValue === 'other' ? this.setState({ other: 'other'}) : this.setState({ distance: itemValue })}>
+                                    itemValue === 'other' ? this.setState({ other: 'other' }) : this.setState({ distance: itemValue })}>
                                 <Picker.Item label='5K' value='3.1' />
                                 <Picker.Item label='8K' value='4.97' />
                                 <Picker.Item label='10K' value='6.2' />

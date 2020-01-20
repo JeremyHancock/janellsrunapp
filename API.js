@@ -13,7 +13,7 @@ export default {
                 })
                 .catch((error) => {
                     console.error(error);
-                    reject(Error('An error occured.', error))
+                    resolve(Error('An error occured.', error))
                 })
         })
     },
@@ -44,7 +44,7 @@ export default {
                 })
                 .catch((error) => {
                     console.error(error);
-                    reject(Error('An error occured.', error))
+                    resolve(Error('An error occured.', error))
                 })
         })
     },
@@ -60,7 +60,7 @@ export default {
                 })
                 .catch((error) => {
                     console.error(error);
-                    reject(Error('An error occured.', error))
+                    resolve(Error('An error occured.', error))
                 })
         })
     }

@@ -40,8 +40,20 @@ class List extends Component {
 
     getStoredData() {
         AsyncStorage.getItem("races").then((value) => {
-            this.setState({ runs: JSON.parse(value) });
-            this.formatRaceData(JSON.parse(value));
+            if (value.length > 2) {
+                this.setState({ runs: JSON.parse(value) });
+                this.formatRaceData(JSON.parse(value));
+            } else {
+                this.setState({ loading: false })
+                Alert.alert(
+                    'No races found',
+                    'Go ahead and add one!',
+                    [
+                        { text: 'Add a race!', onPress: () => this.addRace() },
+                        { text: 'Cancel', style: 'cancel' }
+                    ],
+                    { cancelable: false })
+            }
         })
     };
 
@@ -50,12 +62,10 @@ class List extends Component {
             this.setState({ apiNotCalled: false })
             api.getRuns(this.props.user)
                 .then(function (races) {
-                    if (this.mounted) {
-                        if (races.length !== 0) {
-                            this.setState({ runs: races });
-                            stringifiedRaces = JSON.stringify(races);
-                            AsyncStorage.setItem('races', stringifiedRaces);
-                        };
+                    if (races.length !== 0) {
+                        this.setState({ runs: races });
+                        stringifiedRaces = JSON.stringify(races);
+                        AsyncStorage.setItem('races', stringifiedRaces);
                         this.formatRaceData(races);
                     } else {
                         this.setState({ loading: false })
