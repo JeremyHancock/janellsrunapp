@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Row } from 'react-native-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCalendarDay, faStopwatch, faRoad, faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons'
@@ -11,20 +11,20 @@ class Header extends Component {
         this.state = {
             sortBy: 'date',
             tableHead:
-                [<View style={{ justiftyContent: "center", alignItems: "center" }}>
-                    <FontAwesomeIcon icon={faMapMarkedAlt} style={{ color: 'white' }} size={40}
+                [<View style={styles.center}>
+                    <FontAwesomeIcon icon={faMapMarkedAlt} style={styles.white} size={40}
                     onPress={() => this.sortBy('name')} />
                 </View>,
-                <View style={{ justiftyContent: "center", alignItems: "center" }}>
-                    <FontAwesomeIcon icon={faRoad} style={{ color: 'white' }} size={44} 
+                <View style={styles.center}>
+                    <FontAwesomeIcon icon={faRoad} style={styles.white} size={44} 
                     onPress={() => this.sortBy('distance')}/>
                 </View>,
-                <View style={{ justiftyContent: "center", alignItems: "center" }}>
-                    <FontAwesomeIcon icon={faCalendarDay} style={{ color: 'white' }} size={36} 
+                <View style={styles.center}>
+                    <FontAwesomeIcon icon={faCalendarDay} style={styles.white} size={36} 
                     onPress={() => this.sortBy('date')}/>
                 </View>,
-                <View style={{ justiftyContent: "center", alignItems: "center" }}>
-                    <FontAwesomeIcon icon={faStopwatch} style={{ color: 'white' }} size={36} 
+                <View style={styles.center}>
+                    <FontAwesomeIcon icon={faStopwatch} style={styles.white} size={36} 
                     onPress={() => this.sortBy('time')}/>
                 </View>
                 ]
@@ -40,8 +40,13 @@ class Header extends Component {
         return (
             <Row data={state.tableHead}
                 flexArr={[2, 0.5, 1, 1]}
-                style={{ height: 40, backgroundColor: 'black' }} />
+                style={styles.row} />
         )
     }
 }
+const styles = StyleSheet.create({
+    center: { justifyContent: "center", alignItems: "center" },
+    white: { color: 'white' },
+    row: { height: 40, backgroundColor: 'black' }
+  });
 export default Header;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Picker, Text, ScrollView, AsyncStorage, ActivityIndicator } from 'react-native';
+import { View, Picker, Text, ScrollView, AsyncStorage, ActivityIndicator, StyleSheet } from 'react-native';
 
 import List from './List';
 import API from './API';
@@ -43,7 +43,7 @@ class PRs extends Component {
                     loading: false,
                     personalRecords:
                         <View>
-                            <Text style={{ textAlign: 'center', padding: 30 }}>{'Your PRs are gonna look AMAZING here'}</Text>
+                            <Text style={styles.message}>{'Your PRs are gonna look AMAZING here'}</Text>
                         </View>
                 });
             }
@@ -62,7 +62,7 @@ class PRs extends Component {
                         loading: false,
                         personalRecords:
                             <View>
-                                <Text style={{ textAlign: 'center', padding: 30 }}>{'No races have been entered'}</Text>
+                                <Text style={styles.message}>{'No races have been entered'}</Text>
                             </View>
                     });
                 }
@@ -136,14 +136,14 @@ class PRs extends Component {
     DisplayPRs(passedRaces) {
         if (passedRaces.length !== 0) {
             prs = passedRaces.map((pr, i) =>
-                <View key={i} style={{ paddingVertical: 20 }}>
-                    <View style={{ flexDirection: 'row' }} >
-                        <Text style={{ width: '50%', fontSize: 20, textAlign: 'center' }}>{this.convertRunDuration(pr.runDurationInSeconds)}</Text>
-                        <Text style={{ width: '50%', fontSize: 20, textAlign: 'center' }}>{pr.runDistance + ' miles'}</Text>
+                <View key={i} style={styles.raceContainer}>
+                    <View style={styles.row} >
+                        <Text style={styles.rowItemLarge}>{this.convertRunDuration(pr.runDurationInSeconds)}</Text>
+                        <Text style={styles.rowItemLarge}>{pr.runDistance + ' miles'}</Text>
                     </View>
-                    <View style={{ flexDirection: 'row' }} >
-                        <Text style={{ width: '50%', textAlign: 'center' }}>{pr.raceName}</Text>
-                        <Text style={{ width: '50%', textAlign: 'center' }}>{this.getFormattedDate(new Date(pr.runDate))}</Text>
+                    <View style={styles.row} >
+                        <Text style={styles.rowItem}>{pr.raceName}</Text>
+                        <Text style={styles.rowItem}>{this.getFormattedDate(new Date(pr.runDate))}</Text>
                     </View>
                 </View>
             );
@@ -152,7 +152,7 @@ class PRs extends Component {
             }
         } else {
             noRaces = <View>
-                <Text style={{ textAlign: 'center', padding: 30 }}>{'No races entered for ' + this.state.selectedYear}</Text>
+                <Text style={styles.message}>{'No races entered for ' + this.state.selectedYear}</Text>
             </View>
                 this.setState({personalRecords: noRaces});
             }
@@ -179,12 +179,12 @@ class PRs extends Component {
     render() {
         // this.getPRs();
         return (
-            <View style={{ flex: 1, paddingTop: 10, alignItems: 'center' }}>
-                <View style={{ width: '100%', borderBottomWidth: 3 }}>
+            <View style={styles.container}>
+                <View style={styles.pickerContainer}>
                     {this.state.hidePicker &&
                         <Text
                             onPress={() => this.setState({ hidePicker: false })}
-                            style={{ textAlign: 'center', fontSize: 20, paddingBottom: 20 }}>
+                            style={styles.pickerText}>
                             {this.state.selectedYear + ' PRs'}  &#9660;
                         </Text>
                     }
@@ -193,7 +193,7 @@ class PRs extends Component {
                     {!this.state.hidePicker &&
                         <Picker
                             selectedValue={this.state.selectedYear}
-                            style={{ width: 250, borderWidth: 3, borderRadius: 5, borderColor: '#008080', margin: 5 }}
+                            style={styles.picker}
                             onValueChange={(itemValue) =>
                                 this.racesForSelectedYear(itemValue)}>
                             <Picker.Item label='All Time' value='All Time' />
@@ -210,18 +210,14 @@ class PRs extends Component {
                             <Picker.Item label='2010' value='2010' />
                         </Picker>}
                 </View>
-                <View style={{ width: '100%' }}>
+                <View style={styles.fullWidth}>
                     {this.state.loading ?
-                        <View style={{ padding: 50 }}>
+                        <View style={styles.activityIndicator}>
                             <ActivityIndicator size="large" />
                         </View>
                         :
-                        <View style={{ paddingBottom: 40 }}>
-                            <ScrollView style={{
-                                backgroundColor: '#d9d9d9',
-                                width: '100%',
-                                height: '100%'
-                            }}>
+                        <View style={styles.paddingBottom}>
+                            <ScrollView style={styles.scrollView}>
                                 {this.state.personalRecords}
                             </ScrollView>
                         </View>
@@ -232,4 +228,53 @@ class PRs extends Component {
         )
     };
 };
+const styles = StyleSheet.create({
+    scrollView: {
+        backgroundColor: '#d9d9d9',
+        width: '100%',
+        height: '100%'
+    },
+    fullWidth: { width: '100%' },
+    activityIndicator: { padding: 50 },
+    paddingBottom: { paddingBottom: 40 },
+    message: { 
+        textAlign: 'center', 
+        padding: 30 
+    },
+    raceContainer: { 
+        textAlign: 'center', 
+        padding: 30 
+    },
+    container: { 
+        flex: 1, 
+        paddingTop: 10, 
+        alignItems: 'center' 
+    },
+    row: { flexDirection: 'row' },
+    rowItemLarge: { 
+        width: '50%', 
+        fontSize: 20, 
+        textAlign: 'center' 
+    },
+    rowItem: { 
+        width: '50%', 
+        textAlign: 'center' 
+    },
+    pickerContainer: { 
+        width: '100%', 
+        borderBottomWidth: 3 
+    },
+    pickerText: { 
+        textAlign: 'center', 
+        fontSize: 20, 
+        paddingBottom: 20 
+    },
+    picker: { 
+        width: 250, 
+        borderWidth: 3, 
+        borderRadius: 5, 
+        borderColor: '#008080', 
+        margin: 5 
+    }
+});
 export default PRs;

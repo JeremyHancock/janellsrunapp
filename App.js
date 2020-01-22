@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Alert, Text, Switch } from 'react-native';
+import { View, Image, Alert, Text, Switch, StyleSheet } from 'react-native';
 
 import Entry from './Entry';
 import MenuBar from './menuBar';
@@ -22,22 +22,19 @@ export default class App extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <View style={{ width: '100%', alignItems: 'center' }}>
+      <View style={styles.container}>
+        <View style={styles.imageContainer }>
           <Image source={require('./assets/richmond-silhouette.png')}
-            style={{
-              width: 325,
-              height: 162.5,
-              marginTop: 25
-            }}></Image>
+            style={styles.image}
+          ></Image>
         </View>
         {this.state.selected === 'login' ?
           <Login loggedIn={this.loginCallback} />
           : null}
         {this.state.selected === 'add' ?
-          <Entry user={this.state.user} 
-          prCounterReset={this.prCounterCallback} 
-          listCounterReset={this.listCounterCallback}/>
+          <Entry user={this.state.user}
+            prCounterReset={this.prCounterCallback}
+            listCounterReset={this.listCounterCallback} />
           : null}
         {this.state.selected === 'seeAll' ?
           <List
@@ -50,16 +47,12 @@ export default class App extends Component {
           : null}
         {this.state.selected === 'seeBest' ?
           <PRs user={this.state.user}
-          prChangeCounter={this.state.prChangeCounter}
-          counterReset={this.prCounterCallback} />
+            prChangeCounter={this.state.prChangeCounter}
+            counterReset={this.prCounterCallback} />
           : null}
         {this.state.selected === 'seeAll' ?
-          <View style={{
-            flexDirection: 'row', justifyContent: 'center',
-            alignItems: 'center', padding: 7, backgroundColor: 'black',
-            borderBottomWidth: 1, borderBottomColor: 'white'
-          }}>
-            <Text style={{ color: 'white', fontSize: 20, paddingHorizontal: 15 }}>
+          <View style={styles.toggleRow}>
+            <Text style={styles.toggle}>
               {this.state.training ? 'All the training!' : 'All the races!'}
             </Text>
             <Switch
@@ -78,11 +71,11 @@ export default class App extends Component {
   }
 
   listCounterCallback = (response) => {
-    this.setState({ listChangeCounter: response});
+    this.setState({ listChangeCounter: response });
   }
 
   prCounterCallback = (response) => {
-    this.setState({ prChangeCounter: response});
+    this.setState({ prChangeCounter: response });
   }
 
   trainingToggleCallback = (response) => {
@@ -98,4 +91,25 @@ export default class App extends Component {
   }
 }
 
-
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  imageContainer: { 
+    width: '100%', 
+    alignItems: 'center'
+  },
+  image: { 
+    width: 325, 
+    height: 162.5, 
+    marginTop: 25 
+  },
+  toggleRow: {
+    flexDirection: 'row', justifyContent: 'center',
+    alignItems: 'center', padding: 7, backgroundColor: 'black',
+    borderBottomWidth: 1, borderBottomColor: 'white'
+  },
+  toggle: { 
+    color: 'white', 
+    fontSize: 20, 
+    paddingHorizontal: 15 
+  }
+});

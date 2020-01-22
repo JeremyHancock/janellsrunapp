@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, ScrollView, ActivityIndicator, Alert, AsyncStorage, Text } from 'react-native';
+import { View, ScrollView, ActivityIndicator, Alert, AsyncStorage, StyleSheet } from 'react-native';
 import { Table, Rows } from 'react-native-table-component';
-import { SwipeRow, SwipeListView } from 'react-native-swipe-list-view';
 
 import API from './API';
 import Header from './Header';
@@ -120,16 +119,16 @@ class List extends Component {
 
     showRaces() {
         if (!this.state.loading) {
-            return <View style={{ paddingBottom: 50 }}>
+            return <View style={styles.paddingBottom}>
                 <Rows
                     data={this.props.training ? trainingRuns : races}
                     flexArr={[2, 0.5, 1, 1]}
-                    textStyle={{ textAlign: 'center' }}
-                    style={{ height: 50 }}
+                    textStyle={styles.center}
+                    style={styles.rowHeight}
                 />
             </View>
         } else {
-            return <View style={{ flex: 1, padding: 50 }}><ActivityIndicator size="large" /></View>
+            return <View style={styles.activityIndicator}><ActivityIndicator size="large" /></View>
         }
     };
 
@@ -233,15 +232,12 @@ class List extends Component {
 
     render() {
         return (
-            <View style={{ flex: 1, paddingTop: 10, backgroundColor: '#fff' }}>
+            <View style={styles.container}>
                 <Table >
                     <Header select={this.headerSelectCallback} />
                     <ScrollView
                         keyboardShouldPersistTaps='handled'
-                        style={{
-                            backgroundColor: '#d9d9d9',
-                            height: '100%',
-                        }}>
+                        style={styles.scrollView}>
                         {this.showRaces()}
                     </ScrollView>
                 </Table>
@@ -249,4 +245,22 @@ class List extends Component {
         )
     };
 };
+const styles = StyleSheet.create({
+    paddingBottom: { paddingBottom: 50 },
+    rowHeight: { height: 50 },
+    center: { textAlign: 'center' },
+    activityIndicator: { 
+        flex: 1, 
+        padding: 50 
+    },
+    container: { 
+        flex: 1, 
+        paddingTop: 10, 
+        backgroundColor: '#fff' 
+    },
+    scrollView: {
+        backgroundColor: '#d9d9d9',
+        height: '100%',
+    }
+});
 export default List;

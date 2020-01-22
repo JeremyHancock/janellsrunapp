@@ -90,21 +90,21 @@ class Entry extends Component {
 
     render() {
         return (
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" >
+            <KeyboardAvoidingView style={styles.flex} behavior="padding" >
                 <ScrollView >
-                    <View style={{ alignItems: 'center' }}>
-                        <View style={this.state.training ? null : { flexDirection: 'row', borderWidth: 3, borderRadius: 5, borderColor: '#008080' }} >
+                    <View style={styles.center}>
+                        <View style={this.state.training ? null : styles.nameRow} >
                             {this.state.training ? null :
                                 <TextInput
                                     value={this.state.raceName}
                                     onChangeText={(raceName) => this.setState({ raceName })}
                                     placeholder='Name your race!'
                                     maxLength={25}
-                                    style={{ width: '50%', height: 45, fontSize: 25, margin: 5, textAlign: 'center' }}>
+                                    style={styles.nameField}>
                                 </TextInput>
                             }
                             <View
-                                style={{ alignItems: 'center' }}>
+                                style={styles.center}>
                                 <Text>
                                     {this.state.training ? 'Training' : 'Race'}
                                 </Text>
@@ -116,19 +116,19 @@ class Entry extends Component {
                                 />
                             </View>
                         </View>
-                        <Text style={{ fontSize: 20 }}>Date</Text>
+                        <Text style={styles.fontMedium}>Date</Text>
                         <DatePickerIOS
-                            style={{ width: 250, borderWidth: 3, borderRadius: 5, borderColor: '#008080', margin: 5 }}
+                            style={styles.picker}
                             initialDate={this.state.date}
                             maximumDate={new Date()}
                             minimumDate={new Date('January 1, 2000')}
                             onDateChange={(date) => this.setDate(date)}
                             mode='date' />
-                        <Text style={{ fontSize: 20 }}>Distance</Text>
+                        <Text style={styles.fontMedium}>Distance</Text>
                         {this.state.other ? null :
                             <Picker
                                 selectedValue={this.state.distance}
-                                style={{ width: 250, borderWidth: 3, borderRadius: 5, borderColor: '#008080', margin: 5 }}
+                                style={styles.picker}
                                 onValueChange={(itemValue, itemIndex) =>
                                     itemValue === 'other' ? this.setState({ other: 'other' }) : this.setState({ distance: itemValue })}>
                                 <Picker.Item label='5K' value='3.1' />
@@ -144,17 +144,17 @@ class Entry extends Component {
                             placeholder='Distance in miles'
                             maxLength={6}
                             keyboardType={'numeric'}
-                            style={{ width: 250, height: 45, fontSize: 25, margin: 5, textAlign: 'center', borderWidth: 3, borderRadius: 5, borderColor: '#008080' }}></TextInput> : null}
-                        <Text style={{ fontSize: 20 }}>Time</Text>
+                            style={styles.distanceField}></TextInput> : null}
+                        <Text style={styles.fontMedium}>Time</Text>
                         <View
-                            style={{ flexDirection: 'row' }}>
+                            style={styles.row}>
                             <TextInput
                                 value={this.state.hours}
                                 onChangeText={(hours) => this.setState({ hours })}
                                 placeholder='H'
                                 maxLength={2}
                                 keyboardType={'number-pad'}
-                                style={{ width: 80, height: 45, fontSize: 25, borderWidth: 3, borderRadius: 5, borderColor: '#008080', margin: 5, textAlign: 'center' }}>
+                                style={styles.timeField}>
                             </TextInput>
                             <TextInput
                                 value={this.state.minutes}
@@ -162,7 +162,7 @@ class Entry extends Component {
                                 placeholder='M'
                                 maxLength={2}
                                 keyboardType={'number-pad'}
-                                style={{ width: 80, height: 45, fontSize: 25, borderWidth: 3, borderRadius: 5, borderColor: '#008080', margin: 5, textAlign: 'center' }}>
+                                style={styles.timeField}>
                             </TextInput>
                             <TextInput
                                 value={this.state.seconds}
@@ -170,17 +170,17 @@ class Entry extends Component {
                                 placeholder='S'
                                 maxLength={2}
                                 keyboardType={'number-pad'}
-                                style={{ width: 80, height: 45, fontSize: 25, borderWidth: 3, borderRadius: 5, borderColor: '#008080', margin: 5, textAlign: 'center' }}>
+                                style={styles.timeField}>
                             </TextInput>
                         </View>
                         <TouchableOpacity
-                            style={{ backgroundColor: '#008080', padding: 12, margin: 15, borderRadius: 50 }}
+                            style={styles.button}
                             onPress={() =>
                                 this.collectRunFromForm()
                             }>
-                            <Text style={{ color: '#f8f8f8', fontSize: 20, textAlign: 'center' }}>Post Run</Text>
+                            <Text style={styles.buttonText}>Post Run</Text>
                         </TouchableOpacity>
-                        <View style={{ height: 60 }} />
+                        <View style={styles.spacer} />
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -189,10 +189,62 @@ class Entry extends Component {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        alignItems: 'center',
+    row: { flexDirection: 'row' },
+    flex: { flex: 1 },
+    center: { alignItems: 'center' },
+    fontMedium: { fontSize: 20 },
+    spacer: { height: 60 },
+    nameRow: {
+        flexDirection: 'row',
+        borderWidth: 3,
+        borderRadius: 5,
+        borderColor: '#008080'
     },
+    nameField: {
+        width: '50%',
+        height: 45,
+        fontSize: 25,
+        margin: 5,
+        textAlign: 'center'
+    },
+    distanceField: {
+        width: 250,
+        height: 45,
+        fontSize: 25,
+        margin: 5,
+        textAlign: 'center',
+        borderWidth: 3,
+        borderRadius: 5,
+        borderColor: '#008080'
+    },
+    timeField: {
+        width: 80,
+        height: 45,
+        fontSize: 25,
+        borderWidth: 3,
+        borderRadius: 5,
+        borderColor: '#008080',
+        margin: 5,
+        textAlign: 'center'
+    },
+    picker: {
+        width: 250,
+        borderWidth: 3,
+        borderRadius: 5,
+        borderColor: '#008080',
+        margin: 5
+    },
+    button: { 
+        backgroundColor: '#008080', 
+        padding: 12, 
+        margin: 15, 
+        borderRadius: 50 
+    },
+    buttonText: { 
+        color: '#f8f8f8', 
+        fontSize: 20, 
+        textAlign: 'center' 
+    }
 });
 
 export default Entry;

@@ -44,8 +44,8 @@ export default class Login extends Component {
     render() {
         return (
             <View style={styles.container} >
-                <ScrollView style={{ width: '100%', height: '100%' }}>
-                    <View style={{ alignItems: 'center' }}>
+                <ScrollView style={styles.scrollView}>
+                    <View style={styles.center}>
                         <TextInput
                             value={this.state.email}
                             onChangeText={(email) => this.setState({ email })}
@@ -62,8 +62,8 @@ export default class Login extends Component {
                         <TouchableOpacity
                             title={'Login'}
                             onPress={this.onLogin.bind(this)}
-                            style={{ width: 100, backgroundColor: '#008080', padding: 12, margin: 15, borderRadius: 50, alignItems: 'center' }}>
-                            <Text style={{ color: '#f8f8f8', fontSize: 20, textAlign: 'center' }}> {this.state.signup ? 'Sign Up' : 'Log In'}</Text>
+                            style={styles.button}>
+                            <Text style={styles.buttonText}> {this.state.signup ? 'Sign Up' : 'Log In'}</Text>
                         </TouchableOpacity>
                         <Text onPress={this.switchForm.bind(this)}>{this.state.signup ? 'Log In' : 'Sign Up'}</Text>
                     </View>
@@ -75,9 +75,8 @@ export default class Login extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
+    container: { flex: 1 },
+    center: { alignItems: 'center' },
     input: {
         width: 200,
         height: 44,
@@ -87,4 +86,21 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         margin: 20,
     },
+    scrollView: { 
+        width: '100%', 
+        height: '100%' 
+    },
+    button: {
+        width: 100, 
+        backgroundColor: '#008080', 
+        padding: 12, 
+        margin: 15, 
+        borderRadius: 50, 
+        alignItems: 'center' 
+    },
+    buttonText: { 
+        color: '#f8f8f8', 
+        fontSize: 20, 
+        textAlign: 'center' 
+    }
 });
