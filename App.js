@@ -25,7 +25,7 @@ export default class App extends Component {
       <View style={styles.container}>
         {this.state.selected !== 'login' ?
         <Text style={styles.logoutText} 
-        onPress={() => this.setState({selected: 'login'})}>
+        onPress={() => this.setState({ selected: 'login', hideMenu: true })}>
           Logout</Text>
         :         
         <Text style={styles.logoutText}></Text>
