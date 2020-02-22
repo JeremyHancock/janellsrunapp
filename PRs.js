@@ -13,7 +13,8 @@ class PRs extends Component {
             personalRecords: [],
             hidePicker: true,
             races: [],
-            loading: true
+            loading: true,
+            lastTenYears: []
         };
         api = API;
         list = List;
@@ -22,6 +23,7 @@ class PRs extends Component {
 
     componentDidMount() {
         this.mounted = true;
+        this.getLastTenYears();
         if (this.props.prChangeCounter > 0) {
             this.props.counterReset(0);
             this.callApi();
@@ -38,6 +40,7 @@ class PRs extends Component {
         AsyncStorage.getItem("races").then((value) => {
             if (value.length > 2) {
                 this.setState({ races: JSON.parse(value), loading: false });
+                this.getPRs();
             } else {
                 this.setState({
                     loading: false,
@@ -57,6 +60,7 @@ class PRs extends Component {
                     this.setState({ races: races, loading: false });
                     stringifiedRaces = JSON.stringify(races);
                     AsyncStorage.setItem('races', stringifiedRaces);
+                    this.getPRs();
                 } else {
                     this.setState({
                         loading: false,
@@ -77,22 +81,26 @@ class PRs extends Component {
     };
 
     racesForSelectedYear(selectedYear) {
-        this.setState({ selectedYear: selectedYear, hidePicker: true })
-        if (selectedYear !== 'All Time') {
-            races = this.state.races;
-            selectedRaces = [];
-            counter = 0;
-            races.forEach(race => {
-                counter++;
-                raceYear = this.getYear(new Date(race.runDate))
-                if (raceYear === selectedYear) {
-                    selectedRaces.push(race);
-                }
-                if (counter === races.length) {
-                    this.setState({ selectedRaces: selectedRaces });
-                }
-            })
-        }
+        this.setState({ selectedYear: selectedYear, hidePicker: true }, () => {
+            if (selectedYear !== 'All Time') {
+                races = this.state.races;
+                selectedRaces = [];
+                counter = 0;
+                races.forEach(race => {
+                    counter++;
+                    raceYear = this.getYear(new Date(race.runDate))
+                    if (raceYear === selectedYear) {
+                        selectedRaces.push(race);
+                    }
+                    if (counter === races.length) {
+                        this.setState({ selectedRaces: selectedRaces }, () => {
+                            this.getPRs();
+                        });
+                    }
+                })
+            }
+            this.getPRs();
+        });
     };
 
     getPRs() {
@@ -129,11 +137,12 @@ class PRs extends Component {
                     }
                 });
             });
-            this.DisplayPRs(racePRs);
+            this.displayPRs(racePRs);
         };
+        this.displayPRs(racePRs);
     };
 
-    DisplayPRs(passedRaces) {
+    displayPRs(passedRaces) {
         if (passedRaces.length !== 0) {
             prs = passedRaces.map((pr, i) =>
                 <View key={i} style={styles.raceContainer}>
@@ -148,14 +157,25 @@ class PRs extends Component {
                 </View>
             );
             if (prs.length === passedRaces.length) {
-                this.setState({personalRecords: prs});
+                this.setState({ personalRecords: prs });
             }
         } else {
             noRaces = <View>
                 <Text style={styles.message}>{'No races entered for ' + this.state.selectedYear}</Text>
             </View>
-                this.setState({personalRecords: noRaces});
-            }
+            this.setState({ personalRecords: noRaces });
+        }
+    };
+
+    getLastTenYears() {
+        lastTenYears = [];
+        d = new Date();
+        currentYear = d.getFullYear();
+        for (i = 0; i < 10; i++) {
+            lastTenYears.push(currentYear.toString());
+            currentYear = currentYear - 1;
+        };
+        this.setState({ lastTenYears: lastTenYears });
     };
 
     getFormattedDate(date) {
@@ -177,7 +197,6 @@ class PRs extends Component {
     };
 
     render() {
-        // this.getPRs();
         return (
             <View style={styles.container}>
                 <View style={styles.pickerContainer}>
@@ -197,17 +216,9 @@ class PRs extends Component {
                             onValueChange={(itemValue) =>
                                 this.racesForSelectedYear(itemValue)}>
                             <Picker.Item label='All Time' value='All Time' />
-                            <Picker.Item label='2020' value='2020' />
-                            <Picker.Item label='2019' value='2019' />
-                            <Picker.Item label='2018' value='2018' />
-                            <Picker.Item label='2017' value='2017' />
-                            <Picker.Item label='2016' value='2016' />
-                            <Picker.Item label='2015' value='2015' />
-                            <Picker.Item label='2014' value='2014' />
-                            <Picker.Item label='2013' value='2013' />
-                            <Picker.Item label='2012' value='2012' />
-                            <Picker.Item label='2011' value='2011' />
-                            <Picker.Item label='2010' value='2010' />
+                            {this.state.lastTenYears.map((item, index) => {
+                                return (<Picker.Item label={item} value={item} key={index} />)
+                            })}
                         </Picker>}
                 </View>
                 <View style={styles.fullWidth}>
@@ -237,44 +248,44 @@ const styles = StyleSheet.create({
     fullWidth: { width: '100%' },
     activityIndicator: { padding: 50 },
     paddingBottom: { paddingBottom: 40 },
-    message: { 
-        textAlign: 'center', 
-        padding: 30 
+    message: {
+        textAlign: 'center',
+        padding: 30
     },
-    raceContainer: { 
-        textAlign: 'center', 
-        padding: 30 
+    raceContainer: {
+        textAlign: 'center',
+        padding: 30
     },
-    container: { 
-        flex: 1, 
-        paddingTop: 10, 
-        alignItems: 'center' 
+    container: {
+        flex: 1,
+        paddingTop: 10,
+        alignItems: 'center'
     },
     row: { flexDirection: 'row' },
-    rowItemLarge: { 
-        width: '50%', 
-        fontSize: 20, 
-        textAlign: 'center' 
+    rowItemLarge: {
+        width: '50%',
+        fontSize: 20,
+        textAlign: 'center'
     },
-    rowItem: { 
-        width: '50%', 
-        textAlign: 'center' 
+    rowItem: {
+        width: '50%',
+        textAlign: 'center'
     },
-    pickerContainer: { 
-        width: '100%', 
-        borderBottomWidth: 3 
+    pickerContainer: {
+        width: '100%',
+        borderBottomWidth: 3
     },
-    pickerText: { 
-        textAlign: 'center', 
-        fontSize: 20, 
-        paddingBottom: 20 
+    pickerText: {
+        textAlign: 'center',
+        fontSize: 20,
+        paddingBottom: 20
     },
-    picker: { 
-        width: 250, 
-        borderWidth: 3, 
-        borderRadius: 5, 
-        borderColor: '#008080', 
-        margin: 5 
+    picker: {
+        width: 250,
+        borderWidth: 3,
+        borderRadius: 5,
+        borderColor: '#008080',
+        margin: 5
     }
 });
 export default PRs;

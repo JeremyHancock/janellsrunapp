@@ -23,6 +23,13 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {this.state.selected !== 'login' ?
+        <Text style={styles.logoutText} 
+        onPress={() => this.setState({selected: 'login'})}>
+          Logout</Text>
+        :         
+        <Text style={styles.logoutText}></Text>
+        }
         <View style={styles.imageContainer }>
           <Image source={require('./assets/richmond-silhouette.png')}
             style={styles.image}
@@ -111,5 +118,10 @@ const styles = StyleSheet.create({
     color: 'white', 
     fontSize: 20, 
     paddingHorizontal: 15 
+  },
+  logoutText: {
+   alignSelf: 'flex-end',
+   paddingTop: 30,
+   paddingRight:10
   }
 });
