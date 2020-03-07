@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Alert, Text, Switch, StyleSheet } from 'react-native';
+import { View, Image, Alert, Text, Switch, StyleSheet, AsyncStorage } from 'react-native';
 
 import Entry from './Entry';
 import MenuBar from './menuBar';
@@ -24,13 +24,12 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         {this.state.selected !== 'login' ?
-        <Text style={styles.logoutText} 
-        onPress={() => this.setState({ selected: 'login', hideMenu: true })}>
-          Logout</Text>
-        :         
-        <Text style={styles.logoutText}></Text>
+          <Text style={styles.logoutText} onPress={() => this.logout()}>
+            Logout</Text>
+          :
+          <Text style={styles.logoutText}></Text>
         }
-        <View style={styles.imageContainer }>
+        <View style={styles.imageContainer}>
           <Image source={require('./assets/richmond-silhouette.png')}
             style={styles.image}
           ></Image>
@@ -73,6 +72,17 @@ export default class App extends Component {
       </View>
     );
   }
+
+  logout() {
+    this.setState({
+      selected: 'login',
+      hideMenu: true,
+      listChangeCounter: 1,
+      prChangeCounter: 1
+    });
+    AsyncStorage.clear();
+  }
+
   menuSelectCallback = (response) => {
     this.setState({ selected: response });
   }
@@ -100,28 +110,28 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  imageContainer: { 
-    width: '100%', 
+  imageContainer: {
+    width: '100%',
     alignItems: 'center'
   },
-  image: { 
-    width: 325, 
-    height: 162.5, 
-    marginTop: 25 
+  image: {
+    width: 325,
+    height: 162.5,
+    marginTop: 25
   },
   toggleRow: {
     flexDirection: 'row', justifyContent: 'center',
     alignItems: 'center', padding: 7, backgroundColor: 'black',
     borderBottomWidth: 1, borderBottomColor: 'white'
   },
-  toggle: { 
-    color: 'white', 
-    fontSize: 20, 
-    paddingHorizontal: 15 
+  toggle: {
+    color: 'white',
+    fontSize: 20,
+    paddingHorizontal: 15
   },
   logoutText: {
-   alignSelf: 'flex-end',
-   paddingTop: 30,
-   paddingRight:10
+    alignSelf: 'flex-end',
+    paddingTop: 30,
+    paddingRight: 10
   }
 });

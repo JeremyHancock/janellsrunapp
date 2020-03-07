@@ -26,7 +26,6 @@ class List extends Component {
     async componentDidMount() {
         this.mounted = true;
         if (this.props.listChangeCounter > 0) {
-            this.props.counterReset(0);
             this.callApi();
         } else {
             this.getStoredData();
@@ -62,6 +61,7 @@ class List extends Component {
             api.getRuns(this.props.user)
                 .then(function (races) {
                     if (races.length !== 0) {
+                        this.props.counterReset(0);
                         this.setState({ runs: races });
                         stringifiedRaces = JSON.stringify(races);
                         AsyncStorage.setItem('races', stringifiedRaces);

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Text, TextInput, View, StyleSheet, Alert, ScrollView } from 'react-native';
+import { TouchableOpacity, Text, TextInput, View, StyleSheet, Alert, ScrollView, Keyboard } from 'react-native';
 
 import API from './API';
 
@@ -67,7 +67,6 @@ export default class Login extends Component {
                         </TouchableOpacity>
                         <Text onPress={this.switchForm.bind(this)}>{this.state.signup ? 'Log In' : 'Sign Up'}</Text>
                     </View>
-
                 </ScrollView>
             </View>
         );

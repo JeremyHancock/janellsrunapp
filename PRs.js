@@ -25,7 +25,6 @@ class PRs extends Component {
         this.mounted = true;
         this.getLastTenYears();
         if (this.props.prChangeCounter > 0) {
-            this.props.counterReset(0);
             this.callApi();
         } else {
             this.getStoredData();
@@ -57,6 +56,7 @@ class PRs extends Component {
         api.getRuns(this.props.user)
             .then(function (races) {
                 if (races.length !== 0) {
+                    this.props.counterReset(0);
                     this.setState({ races: races, loading: false });
                     stringifiedRaces = JSON.stringify(races);
                     AsyncStorage.setItem('races', stringifiedRaces);
