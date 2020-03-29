@@ -38,6 +38,11 @@ app.post('/usercredentials', async function (req, res) {
   res.send(response);
 });
 
+app.post('/reset', async function (req, res) {
+  response = await reset(req);
+  res.send(response);
+});
+
 app.get('/runs', async function (req, res) {
   runs = await getRuns(req.query.user);
   res.send(runs);
@@ -64,19 +69,19 @@ app.delete('/runs', async function (req, res) {
 function signin(creds) {
   email = creds.query.email.toLowerCase();
   password = creds.query.password;
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     firebase.auth().signInWithEmailAndPassword(email, password)
-      .then((response) => {
+      .then(response => {
         if (response.user.email.toLowerCase() === email) {
           if (response.user.emailVerified) {
             console.log('signed in as', email)
             resolve(true);
           } else {
             var user = firebase.auth().currentUser;
-            user.sendEmailVerification().then(function () {
+            user.sendEmailVerification().then(() => {
               console.log('Email sent to ', email);
               resolve('email sent');
-            }).catch(function (error) {
+            }).catch(error => {
               console.log(error.code);
               resolve(error.code);
             });
@@ -85,7 +90,7 @@ function signin(creds) {
           resolve('problem')
         }
       })
-      .catch(function (error) {
+      .catch(error => {
         console.log(error.code)
         resolve(error.code)
       });
@@ -95,30 +100,49 @@ function signin(creds) {
 function signup(creds) {
   const email = creds.body.email;
   const password = creds.body.password;
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then((response) => {
+      .then(response => {
         if (response) {
           var user = firebase.auth().currentUser;
-          user.sendEmailVerification().then(function () {
+          user.sendEmailVerification().then(() => {
             console.log('Email sent to ', email);
             resolve('email sent');
-          }).catch(function (error) {
+          }).catch(error => {
             console.log(error.code);
             resolve(error.code);
           });
         }
       })
-      .catch(function (error) {
+      .catch(error => {
         console.log(error.code);
         resolve(error.code);
       });
   });
 };
 
+function reset(request) {
+  return new Promise((resolve, reject) =>{
+    email = request.body.email
+    const user = auth.getUserByEmail(email);
+    if (user) {
+      firebase.auth().sendPasswordResetEmail(email)
+        .then(() => {
+          resolve("sent");
+        })
+        .catch(error => {
+          console.log(error.code);
+          resolve(error.code);
+        });
+    } else {
+      resolve("no user found")
+    };
+  });
+};
+
 function getRuns(user) {
   if (user && user !== (undefined || 'undefined')) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       console.log('getRuns hit by', user)
       db.collection(user + '.runs').get()
         .then(snapshot => {
@@ -144,7 +168,7 @@ function getRuns(user) {
 };
 
 function postRun(run) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) =>{
     if (run.body.user !== undefined) {
       db.collection(run.body.user + '.runs').doc(run.body.id).set(run.body)
         .then(response => {

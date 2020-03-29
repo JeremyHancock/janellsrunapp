@@ -9,15 +9,35 @@ export default class Login extends Component {
         this.state = {
             email: '',
             password: '',
-            signup: false
+            signup: false,
+            forgotPassword: false
         };
         api = API;
     };
+
     componentWillUnmount() {
         this.mounted = false;
     }
-    switchForm() {
+
+    switchFormBetweenSigninAndSignup() {
         this.setState({ signup: !this.state.signup })
+    }
+
+    switchFormToForgotPassword() {
+        this.setState({ forgotPassword: !this.state.forgotPassword });
+        if (this.state.signup) {
+            this.setState({ signup: false });
+        }
+    }
+
+    async sendEmail() {
+        const email = this.state.email;
+        emailSent = await api.passwordReset(email);
+        if (emailSent) {
+            Alert.alert('Check your email for password reset');
+        } else {
+            Alert.alert('Something went wrong! Please try again');
+        }
     }
     async onLogin() {
         const { email, password } = this.state
@@ -69,20 +89,38 @@ export default class Login extends Component {
                             placeholder={'Email'}
                             style={styles.input}
                         />
-                        <TextInput
-                            value={this.state.password}
-                            onChangeText={(password) => this.setState({ password })}
-                            placeholder={'Password'}
-                            secureTextEntry={true}
-                            style={styles.input}
-                        />
-                        <TouchableOpacity
-                            title={'Login'}
-                            onPress={this.onLogin.bind(this)}
-                            style={styles.button}>
-                            <Text style={styles.buttonText}> {this.state.signup ? 'Sign Up' : 'Log In'}</Text>
-                        </TouchableOpacity>
-                        <Text onPress={this.switchForm.bind(this)}>{this.state.signup ? 'Log In' : 'Sign Up'}</Text>
+                        {!this.state.forgotPassword ?
+                            <TextInput
+                                value={this.state.password}
+                                onChangeText={(password) => this.setState({ password })}
+                                placeholder={'Password'}
+                                secureTextEntry={true}
+                                style={styles.input}
+                            />
+                            : null}
+                        {this.state.forgotPassword ?
+                            <TouchableOpacity
+                                title={'Email'}
+                                onPress={this.sendEmail.bind(this)}
+                                style={styles.buttonLarge}>
+                                <Text style={styles.buttonText}> Send E-mail</Text>
+                            </TouchableOpacity>
+                            : null}
+                        {!this.state.forgotPassword ?
+                            <TouchableOpacity
+                                title={'Login'}
+                                onPress={this.onLogin.bind(this)}
+                                style={styles.button}>
+                                <Text style={styles.buttonText}> {this.state.signup ? 'Sign Up' : 'Sign In'}</Text>
+                            </TouchableOpacity>
+                            : null}
+                        {!this.state.forgotPassword ?
+                            <Text onPress={this.switchFormBetweenSigninAndSignup.bind(this)}>{this.state.signup ? 'Back to sign in' : 'Create a new account'}</Text>
+                            : null}
+                        <Text
+                            style={styles.forgotPasswordText}
+                            onPress={this.switchFormToForgotPassword.bind(this)}
+                        >{this.state.forgotPassword ? 'Back to sign in' : 'Forgot password?'}</Text>
                     </View>
                     <View style={styles.spacer}>
                     </View>
@@ -112,6 +150,16 @@ const styles = StyleSheet.create({
         width: 100,
         backgroundColor: '#008080',
         padding: 12,
+        marginBottom: 20,
+        margin: 15,
+        borderRadius: 50,
+        alignItems: 'center'
+    },
+    buttonLarge: {
+        width: 200,
+        backgroundColor: '#008080',
+        padding: 12,
+        marginBottom: 20,
         margin: 15,
         borderRadius: 50,
         alignItems: 'center'
@@ -120,6 +168,10 @@ const styles = StyleSheet.create({
         color: '#f8f8f8',
         fontSize: 20,
         textAlign: 'center'
+    },
+    forgotPasswordText: {
+        textAlign: 'center',
+        paddingTop: 70
     },
     spacer: { padding: 150 }
 });

@@ -65,7 +65,22 @@ export default {
                 })
                 .catch((error) => {
                     console.error(error);
-                    resolve(Error('An error occured.', error))
+                    resolve(Error('An error occured', error))
+                })
+        })
+    },
+    passwordReset: function (email) {
+        console.log('password reset was call for',email);
+        return new Promise(function (resolve, reject) {
+            serverRequest = axios.post('http://192.168.1.183:8080/reset', email)
+                .then((response) => {
+                    if (serverRequest) {
+                        resolve(response.data);
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    resolve(Error('An error occured', error))
                 })
         })
     }
