@@ -31,16 +31,19 @@ app.listen(PORT, function () {
 app.get('/usercredentials', async function (req, res) {
   response = await signin(req);
   res.send(response);
+  return res.statusCode;
 });
 
 app.post('/usercredentials', async function (req, res) {
   response = await signup(req);
   res.send(response);
+  return res.statusCode;
 });
 
 app.post('/reset', async function (req, res) {
   response = await reset(req);
   res.send(response);
+  return res.statusCode;
 });
 
 app.get('/runs', async function (req, res) {
@@ -52,6 +55,7 @@ app.get('/runs', async function (req, res) {
 app.post('/runs', async function (req, res) {
   postResponse = await postRun(req);
   res.send(postResponse);
+  return res.statusCode;
 });
 
 app.put('/runs', async function (req, res) {

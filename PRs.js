@@ -20,7 +20,7 @@ class PRs extends Component {
         list = List;
         racePRs = [];
     };
-    
+
     componentDidMount() {
         this.mounted = true;
         this.getLastTenYears();
@@ -30,11 +30,11 @@ class PRs extends Component {
             this.getStoredData();
         }
     };
-    
+
     componentWillUnmount() {
         this.mounted = false;
     };
-    
+
     getLastTenYears() {
         lastTenYears = [];
         d = new Date();
@@ -45,7 +45,7 @@ class PRs extends Component {
         };
         this.setState({ lastTenYears: lastTenYears });
     };
-    
+
     callApi() {
         api.getRuns(this.props.user)
             .then(function (races) {
@@ -65,13 +65,13 @@ class PRs extends Component {
                     });
                 }
             }.bind(this))
-            .catch(function (err) {
+            .catch(err => {
                 console.log(err);
             })
     };
 
     getStoredData() {
-        AsyncStorage.getItem("races").then((value) => {
+        AsyncStorage.getItem("races").then(value => {
             if (value.length > 2) {
                 this.setState({ races: JSON.parse(value), loading: false });
                 this.getPRs();
@@ -105,20 +105,16 @@ class PRs extends Component {
                 pr = 86400;
                 counter = 0;
                 races.forEach(race => {
-                    if (race.raceName !== 'Training') {
-                        if (race.runDistance === distance) {
-                            if (race.runDurationInSeconds < pr) {
-                                pr = race.runDurationInSeconds;
-                                if (counter === 0) {
-                                    racePRs.push(race);
-                                    counter++;
-                                } else {
-                                    racePRs.pop();
-                                    racePRs.push(race);
-                                }
-                            };
+                    if (race.raceName !== 'Training' && race.runDistance === distance && race.runDistance < pr) {
+                        pr = race.runDurationInSeconds;
+                        if (counter === 0) {
+                            racePRs.push(race);
+                            counter++;
+                        } else {
+                            racePRs.pop();
+                            racePRs.push(race);
                         };
-                    }
+                    };
                 });
             });
             this.displayPRs(racePRs);
@@ -213,7 +209,7 @@ class PRs extends Component {
                         <Picker
                             selectedValue={this.state.selectedYear}
                             style={styles.picker}
-                            onValueChange={(itemValue) =>
+                            onValueChange={itemValue =>
                                 this.racesForSelectedYear(itemValue)}>
                             <Picker.Item label='All Time' value='All Time' />
                             {this.state.lastTenYears.map((item, index) => {
@@ -239,6 +235,7 @@ class PRs extends Component {
         )
     };
 };
+
 const styles = StyleSheet.create({
     scrollView: {
         backgroundColor: '#d9d9d9',

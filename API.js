@@ -6,12 +6,12 @@ export default {
         console.log('getRuns was called for', user);
         return new Promise(function (resolve, reject) {
             serverRequest = axios.get('http://192.168.1.183:8080/runs?user=' + user)
-                .then((response) => {
+                .then(response => {
                     if (serverRequest) {
                         resolve(response.data);
                     }
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error(error);
                     resolve(Error('An error occured.', error))
                 })
@@ -21,12 +21,12 @@ export default {
         console.log('postRun was called', run);
         return new Promise(function (resolve, reject) {
             serverRequest = axios.post('http://192.168.1.183:8080/runs', run)
-                .then((response) => {
+                .then(response => {
                     if (serverRequest) {
                         resolve(response);
                     }
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error(error);
                     resolve(Error('An error occured.', error))
                 })
@@ -42,12 +42,12 @@ export default {
         console.log('signin was called for', email);
         return new Promise(function (resolve, reject) {
             serverRequest = axios.get('http://192.168.1.183:8080/usercredentials?email=' + email + '&password=' + password)
-                .then((response) => {
+                .then(response => {
                     if (serverRequest) {
                         resolve(response.data);
                     }
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error(error);
                     resolve(Error('An error occured.', error))
                 })
@@ -58,12 +58,12 @@ export default {
         credentials = { 'email': email, 'password': password }
         return new Promise(function (resolve, reject) {
             serverRequest = axios.post('http://192.168.1.183:8080/usercredentials', credentials)
-                .then((response) => {
+                .then(response => {
                     if (serverRequest) {
                         resolve(response.data);
                     }
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error(error);
                     resolve(Error('An error occured', error))
                 })
@@ -73,12 +73,12 @@ export default {
         console.log('password reset was call for',email);
         return new Promise(function (resolve, reject) {
             serverRequest = axios.post('http://192.168.1.183:8080/reset', email)
-                .then((response) => {
+                .then(response => {
                     if (serverRequest) {
                         resolve(response.data);
                     }
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error(error);
                     resolve(Error('An error occured', error))
                 })

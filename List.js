@@ -91,7 +91,7 @@ class List extends Component {
     formatRaceData(runs) {
         races = [];
         if (runs.length) {
-            runs.map((race, i) => {
+            runs.map((race) => {
                 if (race.raceName !== 'Training') {
                     races.push(
                         [

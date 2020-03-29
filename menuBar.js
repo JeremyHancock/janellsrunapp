@@ -14,22 +14,15 @@ class MenuBar extends Component {
 
     flipValue(valueName) {
         this.props.select(valueName);
-        if (valueName === 'add') {
-            this.setState({ add: true })
-            this.setState({ seeAll: false })
-            this.setState({ seeBest: false })
-        }
-        if (valueName === 'seeAll') {
-            this.setState({ add: false })
-            this.setState({ seeAll: true })
-            this.setState({ seeBest: false })
-        }
-        if (valueName === 'seeBest') {
-            this.setState({ add: false })
-            this.setState({ seeAll: false })
-            this.setState({ seeBest: true })
-        }
-    }
+        switch (valueName) {
+            case 'add':
+                return this.setState({ add: true, seeAll: false, seeBest: false });
+            case 'seeAll':
+                return this.setState({ add: false, seeAll: true, seeBest: false });
+            default:
+                return this.setState({ add: false, seeAll: false, seeBest: true });
+        };
+    };
 
     render() {
         return (
@@ -52,8 +45,9 @@ class MenuBar extends Component {
                     onPress={() => this.flipValue('seeBest')} />
             </View>
         )
-    }
-}
+    };
+};
+
 const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
@@ -63,9 +57,9 @@ const styles = StyleSheet.create({
         height: 100,
         backgroundColor: '#008080'
     },
-    icon: { 
-        flex: 2, 
-        color: '#f8f8f8' 
+    icon: {
+        flex: 2,
+        color: '#f8f8f8'
     }
 });
 export default MenuBar;

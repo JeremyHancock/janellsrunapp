@@ -53,9 +53,8 @@ class Entry extends Component {
 
     postRun(run) {
         api.postRun(run)
-            .then((response) => {
-                console.log(response);
-                if (response === "success") {
+            .then(response => {
+                if (response.data === "success") {
                     this.props.listCounterReset(1);
                     this.resetFormValues();
                     Alert.alert(run.raceName + ' posted!', 'Great job!')
