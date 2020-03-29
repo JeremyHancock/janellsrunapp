@@ -1,37 +1,41 @@
-var express = require('express');
-var app = express();
-var PORT = 8080;
+const express = require('express');
+const app = express();
+const PORT = 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
+const firebase = require('firebase');
 const admin = require('firebase-admin');
-let serviceAccount = require('./janellsrunapp-firebase-adminsdk-9bjxc-0966de04c2.json');
+
+const serviceAccount = require('./janellsrunapp-firebase-adminsdk-9bjxc-0966de04c2.json');
+const firebaseConfig = require('./janellsRunApp-8cb921de9407.json');
+
+firebase.initializeApp(firebaseConfig);
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: 'https://janellsrunapp.firebaseio.com'
 });
-let db = admin.firestore();
-let auth = admin.auth();
+
+const db = admin.firestore();
+const auth = admin.auth();
 
 races = [];
-credentialsVerified = false;
 
 app.listen(PORT, function () {
   console.log("Server listening on PORT " + PORT);
 });
 
 app.get('/usercredentials', async function (req, res) {
-  authorized = await signin(req)
-  authorized !== true ? authorized = false : null;
-  res.send(authorized);
+  response = await signin(req);
+  res.send(response);
 });
 
 app.post('/usercredentials', async function (req, res) {
-  authorized = await signup(req);
-  authorized !== true ? authorized = false : null;
-  res.send(authorized);
+  response = await signup(req);
+  res.send(response);
 });
 
 app.get('/runs', async function (req, res) {
@@ -40,9 +44,9 @@ app.get('/runs', async function (req, res) {
   return res.statusCode;
 });
 
-app.post('/runs', function (req, res) {
-  postRun(req);
-  res.send(res.statusMessage);
+app.post('/runs', async function (req, res) {
+  postResponse = await postRun(req);
+  res.send(postResponse);
 });
 
 app.put('/runs', async function (req, res) {
@@ -59,44 +63,60 @@ app.delete('/runs', async function (req, res) {
 
 function signin(creds) {
   email = creds.query.email.toLowerCase();
-  // getRuns();
+  password = creds.query.password;
   return new Promise(function (resolve, reject) {
-    authUser = auth.getUserByEmail(email)
-      .then((userRecord) => {
-        if (userRecord.email.toLowerCase() === email) {
-          console.log('signed in as', email)
-          resolve(true);
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((response) => {
+        if (response.user.email.toLowerCase() === email) {
+          if (response.user.emailVerified) {
+            console.log('signed in as', email)
+            resolve(true);
+          } else {
+            var user = firebase.auth().currentUser;
+            user.sendEmailVerification().then(function () {
+              console.log('Email sent to ', email);
+              resolve('email sent');
+            }).catch(function (error) {
+              console.log(error.code);
+              resolve(error.code);
+            });
+          }
+        } else {
+          resolve('problem')
         }
       })
       .catch(function (error) {
-        console.log(error)
-        resolve('an error occurred', error);
+        console.log(error.code)
+        resolve(error.code)
       });
   });
 };
 
 function signup(creds) {
+  const email = creds.body.email;
+  const password = creds.body.password;
   return new Promise(function (resolve, reject) {
-    authUser = auth.createUser({
-      email: creds.body.email,
-      emailVerified: false,
-      password: creds.body.password
-    })
-      .then((userRecord) => {
-        if (userRecord) {
-          console.log('user created for', creds.body.email)
-          resolve(true);
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then((response) => {
+        if (response) {
+          var user = firebase.auth().currentUser;
+          user.sendEmailVerification().then(function () {
+            console.log('Email sent to ', email);
+            resolve('email sent');
+          }).catch(function (error) {
+            console.log(error.code);
+            resolve(error.code);
+          });
         }
       })
       .catch(function (error) {
-        console.log(error)
-        resolve(error);
+        console.log(error.code);
+        resolve(error.code);
       });
   });
-}
+};
 
 function getRuns(user) {
-  console.log('user', user)
   if (user && user !== (undefined || 'undefined')) {
     return new Promise(function (resolve, reject) {
       console.log('getRuns hit by', user)
@@ -119,25 +139,35 @@ function getRuns(user) {
           console.log('Error getting documents', err);
           resolve(err);
         });
-    })
-  }
+    });
+  };
 };
 
 function postRun(run) {
-  if (run.body.user !== undefined) {
-    db.collection(run.body.user + '.runs').doc(run.body.id).set(run.body);
-    console.log('postRun hit', run.body.raceName);
-  }
+  return new Promise(function (resolve, reject) {
+    if (run.body.user !== undefined) {
+      db.collection(run.body.user + '.runs').doc(run.body.id).set(run.body)
+        .then(response => {
+          if (response) {
+            resolve("success");
+            console.log('postRun hit', run.body.raceName);
+          }
+        }).catch(err => {
+          console.log('Error posting race', err);
+          resolve(err);
+        })
+    };
+  })
 };
 
 function updateRun(run) {
   if (run.body !== undefined) {
     console.log('updateRun was hit', run.body);
-  }
+  };
 };
 
 function deleteRun(run) {
   if (run.body !== undefined) {
     console.log('deleteRun was hit', run.body);
-  }
+  };
 };

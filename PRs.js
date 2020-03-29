@@ -20,7 +20,7 @@ class PRs extends Component {
         list = List;
         racePRs = [];
     };
-
+    
     componentDidMount() {
         this.mounted = true;
         this.getLastTenYears();
@@ -30,28 +30,22 @@ class PRs extends Component {
             this.getStoredData();
         }
     };
-
+    
     componentWillUnmount() {
         this.mounted = false;
     };
-
-    getStoredData() {
-        AsyncStorage.getItem("races").then((value) => {
-            if (value.length > 2) {
-                this.setState({ races: JSON.parse(value), loading: false });
-                this.getPRs();
-            } else {
-                this.setState({
-                    loading: false,
-                    personalRecords:
-                        <View>
-                            <Text style={styles.message}>{'Your PRs are gonna look AMAZING here'}</Text>
-                        </View>
-                });
-            }
-        })
+    
+    getLastTenYears() {
+        lastTenYears = [];
+        d = new Date();
+        currentYear = d.getFullYear();
+        for (i = 0; i < 10; i++) {
+            lastTenYears.push(currentYear.toString());
+            currentYear = currentYear - 1;
+        };
+        this.setState({ lastTenYears: lastTenYears });
     };
-
+    
     callApi() {
         api.getRuns(this.props.user)
             .then(function (races) {
@@ -76,31 +70,21 @@ class PRs extends Component {
             })
     };
 
-    getYear(runDate) {
-        return runDate.getFullYear().toString();
-    };
-
-    racesForSelectedYear(selectedYear) {
-        this.setState({ selectedYear: selectedYear, hidePicker: true }, () => {
-            if (selectedYear !== 'All Time') {
-                races = this.state.races;
-                selectedRaces = [];
-                counter = 0;
-                races.forEach(race => {
-                    counter++;
-                    raceYear = this.getYear(new Date(race.runDate))
-                    if (raceYear === selectedYear) {
-                        selectedRaces.push(race);
-                    }
-                    if (counter === races.length) {
-                        this.setState({ selectedRaces: selectedRaces }, () => {
-                            this.getPRs();
-                        });
-                    }
-                })
+    getStoredData() {
+        AsyncStorage.getItem("races").then((value) => {
+            if (value.length > 2) {
+                this.setState({ races: JSON.parse(value), loading: false });
+                this.getPRs();
+            } else {
+                this.setState({
+                    loading: false,
+                    personalRecords:
+                        <View>
+                            <Text style={styles.message}>{'Your PRs are gonna look AMAZING here'}</Text>
+                        </View>
+                });
             }
-            this.getPRs();
-        });
+        })
     };
 
     getPRs() {
@@ -167,15 +151,31 @@ class PRs extends Component {
         }
     };
 
-    getLastTenYears() {
-        lastTenYears = [];
-        d = new Date();
-        currentYear = d.getFullYear();
-        for (i = 0; i < 10; i++) {
-            lastTenYears.push(currentYear.toString());
-            currentYear = currentYear - 1;
-        };
-        this.setState({ lastTenYears: lastTenYears });
+    getYear(runDate) {
+        return runDate.getFullYear().toString();
+    };
+
+    racesForSelectedYear(selectedYear) {
+        this.setState({ selectedYear: selectedYear, hidePicker: true }, () => {
+            if (selectedYear !== 'All Time') {
+                races = this.state.races;
+                selectedRaces = [];
+                counter = 0;
+                races.forEach(race => {
+                    counter++;
+                    raceYear = this.getYear(new Date(race.runDate))
+                    if (raceYear === selectedYear) {
+                        selectedRaces.push(race);
+                    }
+                    if (counter === races.length) {
+                        this.setState({ selectedRaces: selectedRaces }, () => {
+                            this.getPRs();
+                        });
+                    }
+                })
+            }
+            this.getPRs();
+        });
     };
 
     getFormattedDate(date) {

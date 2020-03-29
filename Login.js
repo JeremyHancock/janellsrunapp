@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Text, TextInput, View, StyleSheet, Alert, ScrollView, Keyboard } from 'react-native';
+import { TouchableOpacity, Text, TextInput, View, StyleSheet, Alert, ScrollView } from 'react-native';
 
 import API from './API';
 
@@ -9,8 +9,6 @@ export default class Login extends Component {
         this.state = {
             email: '',
             password: '',
-            errorMessage: null,
-            loggedIn: false,
             signup: false
         };
         api = API;
@@ -25,19 +23,38 @@ export default class Login extends Component {
         const { email, password } = this.state
         if (this.state.signup) {
             signedUp = await api.signup(email, password);
-            if (signedUp) {
-                this.setState({ loggedIn: true })
-                this.props.loggedIn(email);
-            } else {
-                Alert.alert('Something went wrong!');
+            switch (signedUp) {
+                case 'email sent':
+                    Alert.alert('A verification email has been sent to the address provided. Please verify and then log in.');
+                    break;
+                case 'auth/invalid-email':
+                    Alert.alert('You have entered an invalid email');
+                    break;
+                case 'auth/email-already-in-use':
+                    Alert.alert('Someone with this email has already signed up. Try logging in instead');
+                    break;
+                case 'auth/weak-password':
+                    Alert.alert('A stronger password is required');
+                    break;
+                default:
+                    Alert.alert('Something went wrong! Please try again');
             }
         } else {
             loggedIn = await api.signin(email, password);
-            if (loggedIn) {
-                this.setState({ loggedIn: true })
-                this.props.loggedIn(email);
-            } else {
-                Alert.alert('Invalid credentials');
+            switch (loggedIn) {
+                case true:
+                    this.setState({ loggedIn: true });
+                    this.props.loggedIn(email);
+                    break;
+                case 'email sent':
+                    Alert.alert('An email has been sent to the address provided. Please verify your email to continue.');
+                    break;
+                case 'auth/invalid-email':
+                    Alert.alert('You have entered an invalid email');
+                    break;
+                default:
+                    Alert.alert('Invalid login. Please try again');
+                    break;
             }
         }
     }
@@ -67,6 +84,8 @@ export default class Login extends Component {
                         </TouchableOpacity>
                         <Text onPress={this.switchForm.bind(this)}>{this.state.signup ? 'Log In' : 'Sign Up'}</Text>
                     </View>
+                    <View style={styles.spacer}>
+                    </View>
                 </ScrollView>
             </View>
         );
@@ -85,21 +104,22 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         margin: 20,
     },
-    scrollView: { 
-        width: '100%', 
-        height: '100%' 
+    scrollView: {
+        width: '100%',
+        height: '100%'
     },
     button: {
-        width: 100, 
-        backgroundColor: '#008080', 
-        padding: 12, 
-        margin: 15, 
-        borderRadius: 50, 
-        alignItems: 'center' 
+        width: 100,
+        backgroundColor: '#008080',
+        padding: 12,
+        margin: 15,
+        borderRadius: 50,
+        alignItems: 'center'
     },
-    buttonText: { 
-        color: '#f8f8f8', 
-        fontSize: 20, 
-        textAlign: 'center' 
-    }
+    buttonText: {
+        color: '#f8f8f8',
+        fontSize: 20,
+        textAlign: 'center'
+    },
+    spacer: { padding: 150 }
 });

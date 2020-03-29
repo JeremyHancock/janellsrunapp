@@ -19,13 +19,18 @@ export default {
     },
     postRun: function (run) {
         console.log('postRun was called', run);
-        axios.post('http://192.168.1.183:8080/runs', run)
-            .then(function (response) {
-                return response;
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+        return new Promise(function (resolve, reject) {
+            serverRequest = axios.post('http://192.168.1.183:8080/runs', run)
+                .then((response) => {
+                    if (serverRequest) {
+                        resolve(response);
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    resolve(Error('An error occured.', error))
+                })
+        })
     },
     updateRun: function (run) {
         console.log('updateRun was called', run);

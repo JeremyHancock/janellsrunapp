@@ -19,7 +19,6 @@ export default class App extends Component {
       prChangeCounter: 1
     };
   };
-
   render() {
     return (
       <View style={styles.container}>

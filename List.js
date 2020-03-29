@@ -249,14 +249,14 @@ const styles = StyleSheet.create({
     paddingBottom: { paddingBottom: 50 },
     rowHeight: { height: 50 },
     center: { textAlign: 'center' },
-    activityIndicator: { 
-        flex: 1, 
-        padding: 50 
+    activityIndicator: {
+        flex: 1,
+        padding: 50
     },
-    container: { 
-        flex: 1, 
-        paddingTop: 10, 
-        backgroundColor: '#fff' 
+    container: {
+        flex: 1,
+        paddingTop: 10,
+        backgroundColor: '#fff'
     },
     scrollView: {
         backgroundColor: '#d9d9d9',

@@ -39,8 +39,6 @@ class Entry extends Component {
         }
         if (run.raceName && run.runDistance && run.runDurationInSeconds >= 60) {
             this.postRun(run);
-            Alert.alert(run.raceName + ' posted!', 'Great job!')
-            this.resetFormValues();
         }
         if (run.raceName === '') {
             return Alert.alert('Please name your race');
@@ -54,11 +52,20 @@ class Entry extends Component {
     };
 
     postRun(run) {
-        api.postRun(run);
-        this.props.listCounterReset(1);
-        if (run.raceName !== 'Training') {
-            this.props.prCounterReset(1);
-        }
+        api.postRun(run)
+            .then((response) => {
+                console.log(response);
+                if (response === "success") {
+                    this.props.listCounterReset(1);
+                    this.resetFormValues();
+                    Alert.alert(run.raceName + ' posted!', 'Great job!')
+                    if (run.raceName !== 'Training') {
+                        this.props.prCounterReset(1);
+                    }
+                } else {
+                    Alert.alert("Something went wrong! Please try again");
+                }
+            });
     };
 
     resetFormValues() {
@@ -234,16 +241,16 @@ const styles = StyleSheet.create({
         borderColor: '#008080',
         margin: 5
     },
-    button: { 
-        backgroundColor: '#008080', 
-        padding: 12, 
-        margin: 15, 
-        borderRadius: 50 
+    button: {
+        backgroundColor: '#008080',
+        padding: 12,
+        margin: 15,
+        borderRadius: 50
     },
-    buttonText: { 
-        color: '#f8f8f8', 
-        fontSize: 20, 
-        textAlign: 'center' 
+    buttonText: {
+        color: '#f8f8f8',
+        fontSize: 20,
+        textAlign: 'center'
     }
 });
 
